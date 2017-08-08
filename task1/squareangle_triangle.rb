@@ -24,7 +24,7 @@ end
 
 # проверка прямоугольности
 length_side.sort!
-if  (length_side[0] * length_side[0]) + (length_side[1] * length_side[1]) == (length_side[2] * length_side[2])
+if  (length_side[0] ** 2) + (length_side[1] ** 2) == (length_side[2] ** 2)
   is_squareangle = true
 end
 
