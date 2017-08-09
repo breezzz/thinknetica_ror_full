@@ -1,10 +1,9 @@
-index = [ 'A', 'B', 'C']
-koeffs = []
 puts "Введите коэффициенты уравнения Ax**2 + Bx + C"
-3.times {|i|
-  puts "Коэффициент_#{index[i]}?"
-  koeffs[i]  = gets.chomp.to_f
-}
+koeffs = %w(A B C).map do |koef|
+  puts "Коэффициент_#{koef}?"
+  gets.chomp.to_f
+end
+
 diskriminant = koeffs[1] ** 2 - 4 * koeffs[0] * koeffs[2]
 univ_koef = -koeffs[1]/ (2*koeffs[0]) if koeffs[0] != 0
 
