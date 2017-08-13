@@ -1,7 +1,8 @@
-vowels = Hash.new
+vowels = {}
 alfabet = ('a'..'z').to_a
 
-%w(a e i o u y).each do |s|
-  value = alfabet.index(s)
-  vowels[s.to_sym] = value + 1
+alfabet.each do |letter|
+  vowels[letter.to_sym] = alfabet.index(letter) + 1 if %w(a e i o u y).include?(letter)
 end
+
+puts vowels

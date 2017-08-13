@@ -1,11 +1,25 @@
-sum =0
+cart = {}
+total = 0
+
 loop do
-  puts "Введите название товара (стоп для завершения)"
-  break if gets.chomp == 'стоп'
+  puts "Введите наименование товара (стоп для завершения)"
+  name = gets.chomp
+  break if name == 'стоп'
   puts "Количество товара"
-  kol = gets.chomp.to_f
-  puts " Цена за единицу товара"
+  quantity = gets.chomp.to_f
+  puts "Цена за единицу товара"
   price = gets.chomp.to_f
-  sum += price * kol
+  cost = price * quantity
+  total += cost
+  cart[name] = {price: price, quantity: quantity}
 end
-puts "Сумма корзины: #{sum}"
+
+puts "Корзина: "
+puts "#----------------------------------------------------------#"
+puts "Наименование		Количество		Цена		Стоимость"
+puts "#----------------------------------------------------------#"
+cart.each do |name, specification|
+  puts "#{name}				#{specification[:quantity]}				#{specification[:price]}			#{specification[:price] * specification[:quantity]}"
+end
+puts "#----------------------------------------------------------#"
+puts "Итого: #{total}"
