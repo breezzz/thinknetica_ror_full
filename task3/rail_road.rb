@@ -1,143 +1,108 @@
 class Train
-  attr_reader :speed
-  attr_reader :train
-  attr_reader :route
 
-  def initialize(train_number, type, car_quantity)
+  attr_reader :speed, :route, :number, :type, :car_quantity
+  attr_accessor :current_station_index
+
+  def initialize(number, type, car_quantity)
     @speed = 0
-    @train = {
-        train_number: train_number,
-        type: type,
-        car_quantity: car_quantity,
-        current_station: nil
-    }
+    @number = number
+    @type =  type
+    @car_quantity = car_quantity
+    @current_station_index = nil
   end
 
   def stop
     @speed = 0
   end
 
-  def acceleration
+  def accelerate
     @speed += 10
   end
 
-  def number
-    @train[:train_number]
+  def add_car
+    @speed == 0 ? @car_quantity += 1  : nil
   end
 
-  def type
-    @train[:type]
-  end
-  def car_quantity
-    @train[:car_quantity]
-  end
-
-  def change_quantity(remove = false)
-    if @speed == 0
-      (remove && @train[:car_quantity] >= 1) ? @train[:car_quantity] -= 1 : @train[:car_quantity] +=1
-    else
-      puts "Train is moving now"
-    end
+  def remove_car
+    (@speed == 0) && (@car_quantity > 0) ? @car_quantity -= 1  : nil
   end
 
   def set_route(route)
     @route = route
-    @train[:current_station] = 0
+    @current_station_index = 0
+    current_station.arrive_train(itself)
   end
 
-
   def goto_next_station
-    if self.route.size - @train[:current_station] > 1
-       @train[:current_station] += 1
-    else
-         puts "Train at last station"
+    if @current_station_index < @route.stations.size - 1
+      current_station.send_train(itself)
+      @current_station_index += 1
+      current_station.arrive_train(itself)
     end
   end
 
   def goto_prev_station
-    if @train[:current_station] > 0
-      @train[:current_station] -= 1
-    else
-      puts "Train at start station"
+    if @current_station_index > 0
+      current_station.send_train(itself)
+      @current_station_index -= 1
+      current_station.arrive_train(itself)
     end
+
   end
 
   def current_station
-    self.route.get_station_by_number(@train[:current_station])
+    @route.stations[@current_station_index]
   end
 
   def next_station
-    if self.route.size - @train[:current_station] > 1
-      self.route.get_station_by_number(@train[:current_station] + 1)
-    else
-      puts "Train at last station #{self.current_station.name}"
-    end
+    @route.stations[@current_station_index + 1]
   end
 
   def prev_station
-    if @train[:current_station] > 0
-      self.route.get_station_by_number(@train[:current_station] - 1)
-    else
-      puts "Train at start station #{self.current_station.name}"
-    end
+    @route.stations[@current_station_index - 1] if @current_station_index > 0
   end
-
 end
 
 
 class Route
-  attr_reader :size
+
+  attr_reader :stations
+
   def initialize (start_station, end_station)
-    @route = [start_station, end_station]
-    @size = 2
+    @stations = [start_station, end_station]
   end
 
   def get_station_by_number (number)
-    @route[number]
+    @stations[number]
   end
 
   def add_station (station)
-    @route.insert(-2, station)
-    @size += 1
+    @stations.insert(-2, station)
   end
 
   def remove_station (station)
-    @route.delete(station) { return "this station is absent" }
-    @size -= 1
-  end
-
-  def list
-    puts "Route: "
-    @route.each {|station| puts "#{station.name}"}
+    @stations.delete(station) if (station != @stations[0]) && (station != @stations[-1])
   end
 end
 
-
 class Station
-  attr_reader :name
-  attr_reader :trains_at_station
+
+  attr_reader :name, :trains
 
   def initialize(name)
     @name = name
-    @trains_at_station = []
+    @trains = []
   end
 
-  def arrival_train(train)
-    @trains_at_station.push(train.train)
+  def arrive_train(train)
+    @trains.push(train)
   end
 
   def send_train(train)
-    @trains_at_station.delete(train.train) { "this train is absent" }
+    @trains.delete(train)
   end
 
-  def list_trains_by_type
-    train_types = {
-        passenger: [],
-        freight: []
-    }
-    @trains_at_station.each do |listtrains|
-      train_types[listtrains[:type].to_sym].push(listtrains[:train_number])
-    end
-    puts train_types
+  def list_trains_by_type(type)
+    @trains.select { |train|  train.type == type }
   end
 end
