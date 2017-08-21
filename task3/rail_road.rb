@@ -23,7 +23,7 @@ class Train
   end
 
   def remove_car
-    @car_quantity -= 1 if (@speed == 0) && (@car_quantity > 0)
+    @car_quantity -= 1 if @speed == 0 && @car_quantity > 0
   end
 
   def set_route(route)
@@ -76,7 +76,7 @@ class Route
   end
 
   def remove_station (station)
-    @stations.delete(station) if (station != @stations[0]) && (station != @stations[-1])
+    @stations.delete(station) if station != @stations[0] && station != @stations[-1]
   end
 end
 
