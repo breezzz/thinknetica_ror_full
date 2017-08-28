@@ -1,5 +1,5 @@
 class Car
-  attr_reader :type
   def type
+    raise(NotImplementedError, "#{self.class.name}#type is an abstract method.")
   end
 end

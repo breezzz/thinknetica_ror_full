@@ -1,6 +1,6 @@
 class Train
 
-  attr_reader :speed, :route, :number, :current_station_index, :cars, :type
+  attr_reader :speed, :route, :number, :current_station_index, :cars
 
   def initialize(number)
     @speed = 0
@@ -10,6 +10,7 @@ class Train
   end
 
   def type
+    raise(NotImplementedError, "#{self.class.name}#type is an abstract method.")
   end
 
 
@@ -20,7 +21,7 @@ class Train
   end
 
   def goto_next_station
-    if @current_station_index < @route.stations.size - 1
+    if !@route.nil? && @current_station_index < @route.stations.size - 1
       current_station.send_train(self)
       @current_station_index += 1
       current_station.arrive_train(self)
@@ -28,7 +29,7 @@ class Train
   end
 
   def goto_prev_station
-    if @current_station_index > 0
+    if !@route.nil? && @current_station_index > 0
       current_station.send_train(self)
       @current_station_index -= 1
       current_station.arrive_train(self)
