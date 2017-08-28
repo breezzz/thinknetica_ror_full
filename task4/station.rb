@@ -8,7 +8,7 @@ class Station
   end
 
   def arrive_train(train)
-    @trains.push(train)
+    @trains << train
   end
 
   def send_train(train)

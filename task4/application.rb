@@ -30,7 +30,7 @@ class Application
         when 0
           break
         when 1
-          @stations.push(Station.new(gets.chomp))
+          @stations << Station.new(gets.chomp)
         when 2
           create_train
         when 3
@@ -83,9 +83,9 @@ class Application
     puts 'Введите 1 для грузового поезда и 2 для пассажирского:'
     case gets.chomp.to_i
       when 1
-        @trains.push(CargoTrain.new(train_number))
+        @trains << CargoTrain.new(train_number)
       when 2
-        @trains.push(PassengerTrain.new(train_number))
+        @trains << PassengerTrain.new(train_number)
       else
         puts 'Неверный тип поезда'
     end
@@ -96,7 +96,7 @@ class Application
     start_station = station_by_name(gets.chomp)
     puts 'Конечная станция:'
     end_station = station_by_name(gets.chomp)
-    @routes.push(Route.new(start_station,end_station))
+    @routes << Route.new(start_station,end_station)
   end
 
   def add_station_to_route
