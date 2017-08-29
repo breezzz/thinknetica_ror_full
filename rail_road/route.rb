@@ -2,9 +2,18 @@ class Route
 
   attr_reader :stations
 
+  @@routes = []
+
   def initialize (start_station, end_station)
     @stations = [start_station, end_station]
     @id = start_station.name + "_" + end_station.name
+    @@routes << self
+  end
+
+  def self.find(station_name)
+    @@routes.detect do |route|
+      route.stations.detect {|station| station.name == station_name}
+    end
   end
 
   def add_station (station)

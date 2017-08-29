@@ -14,6 +14,10 @@ class Station
     @@stations
   end
 
+  def self.find(station_name)
+    @@stations.detect {|station| station.name == station_name}
+  end
+
   def arrive_train(train)
     @trains << train
   end

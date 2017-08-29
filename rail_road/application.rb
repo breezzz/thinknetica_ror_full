@@ -19,7 +19,7 @@ class Application
                   'Отправить поезд на предыдущую станцию по маршруту',
                   'Показать поезда на станции',
                   'Показать список всех станций']
-    @routes = []
+#    @routes = []
   end
 
   def run
@@ -49,8 +49,7 @@ class Application
         when 10
           Train.find(gets.chomp).goto_prev_station
         when 11
-          need_station = station_by_name(gets.chomp)
-          puts need_station.trains.map {|train| train.number}
+          puts Station.find(gets.chomp).trains.map {|train| train.number}
         when 12
           puts Station.all.map {|station| station.name}
         else
@@ -86,30 +85,30 @@ class Application
 
   def create_route
     puts 'Начальная станция:'
-    start_station = station_by_name(gets.chomp)
+    start_station = Station.find(gets.chomp)
     puts 'Конечная станция:'
-    end_station = station_by_name(gets.chomp)
-    @routes << Route.new(start_station,end_station)
+    end_station = Station.find(gets.chomp)
+    Route.new(start_station,end_station)
   end
 
   def add_station_to_route
     puts 'Название станции для добавления:'
-    new_station = station_by_name(gets.chomp)
+    new_station = Station.find(gets.chomp)
     puts 'Название станции из маршрута:'
-    route_by_station(gets.chomp).add_station(new_station)
+    Route.find(gets.chomp).add_station(new_station)
   end
 
   def remove_station_from_route
     puts 'Название станции:'
     station_for_remove = gets.chomp
-    route_for_remove = route_by_station(station_for_remove)
-    station_for_remove_obj = station_by_name(station_for_remove)
+    route_for_remove = Route.find(station_for_remove)
+    station_for_remove_obj = Station.find(station_for_remove)
     route_for_remove.remove_station(station_for_remove_obj)
   end
 
   def set_route_to_train
     puts 'Название станции из маршрута:'
-    need_route = route_by_station(gets.chomp)
+    need_route = Route.find(gets.chomp)
     puts 'Номер поезда:'
     Train.find(gets.chomp).set_route(need_route)
   end
@@ -124,16 +123,6 @@ class Application
         need_train.add_car(PassengerCar.new)
       else
         puts 'Неверный тип поезда'
-    end
-  end
-
-  def station_by_name(stations = Station.all,station_name)
-    stations.detect {|station| station.name == station_name}
-  end
-
-  def route_by_station(station_name)
-    @routes.detect do |route|
-      station_by_name(route.stations,station_name)
     end
   end
 end
