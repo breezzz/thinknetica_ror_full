@@ -20,7 +20,6 @@ class Application
                   'Показать поезда на станции',
                   'Показать список всех станций']
     @routes = []
-    @trains =[]
   end
 
   def run
@@ -29,8 +28,7 @@ class Application
         when 0
           break
         when 1
-          #@stations <<
-              Station.new(gets.chomp)
+          Station.new(gets.chomp)
         when 2
           create_train
         when 3
@@ -45,11 +43,11 @@ class Application
           add_car_to_train
         when 8
           puts 'Номер поезда: '
-          train_by_number(gets.chomp).remove_car
+          Train.find(gets.chomp).remove_car
         when 9
-          train_by_number(gets.chomp).goto_next_station
+          Train.find(gets.chomp).goto_next_station
         when 10
-          train_by_number(gets.chomp).goto_prev_station
+          Train.find(gets.chomp).goto_prev_station
         when 11
           need_station = station_by_name(gets.chomp)
           puts need_station.trains.map {|train| train.number}
@@ -59,10 +57,6 @@ class Application
           puts 'Нет такого пункта меню'
       end
     end
-
-    #puts @routes.inspect
-    #puts @trains.inspect
-
   end
 
   private
@@ -82,9 +76,9 @@ class Application
     puts 'Введите 1 для грузового поезда и 2 для пассажирского:'
     case gets.chomp.to_i
       when 1
-        @trains << CargoTrain.new(train_number)
+        CargoTrain.new(train_number)
       when 2
-        @trains << PassengerTrain.new(train_number)
+        PassengerTrain.new(train_number)
       else
         puts 'Неверный тип поезда'
     end
@@ -117,12 +111,12 @@ class Application
     puts 'Название станции из маршрута:'
     need_route = route_by_station(gets.chomp)
     puts 'Номер поезда:'
-    train_by_number(gets.chomp).set_route(need_route)
+    Train.find(gets.chomp).set_route(need_route)
   end
 
   def add_car_to_train
     puts 'Номер поезда: '
-    need_train = train_by_number(gets.chomp)
+    need_train = Train.find(gets.chomp)
     case need_train.type
       when :cargo
         need_train.add_car(CargoCar.new)
@@ -135,10 +129,6 @@ class Application
 
   def station_by_name(stations = Station.all,station_name)
     stations.detect {|station| station.name == station_name}
-  end
-
-  def train_by_number(train_number)
-    @trains.detect {|train| train.number == train_number}
   end
 
   def route_by_station(station_name)

@@ -2,17 +2,23 @@ class Train
 
   attr_reader :speed, :route, :number, :current_station_index, :cars
 
+  @@trains =[]
+
   def initialize(number)
     @speed = 0
     @number = number
     @current_station_index = nil
     @cars = []
+    @@trains << self
+  end
+
+  def self.find(train_number)
+    @@trains.detect {|train| train.number == train_number}
   end
 
   def type
     raise(NotImplementedError, "#{self.class.name}#type is an abstract method.")
   end
-
 
   def set_route(route)
     @route = route
