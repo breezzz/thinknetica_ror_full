@@ -19,7 +19,6 @@ class Application
                   'Отправить поезд на предыдущую станцию по маршруту',
                   'Показать поезда на станции',
                   'Показать список всех станций']
-    @stations = []
     @routes = []
     @trains =[]
   end
@@ -30,7 +29,8 @@ class Application
         when 0
           break
         when 1
-          @stations << Station.new(gets.chomp)
+          #@stations <<
+              Station.new(gets.chomp)
         when 2
           create_train
         when 3
@@ -54,13 +54,12 @@ class Application
           need_station = station_by_name(gets.chomp)
           puts need_station.trains.map {|train| train.number}
         when 12
-          puts @stations.map {|station| station.name}
+          puts Station.all.map {|station| station.name}
         else
           puts 'Нет такого пункта меню'
       end
     end
 
-    #puts @stations.inspect
     #puts @routes.inspect
     #puts @trains.inspect
 
@@ -134,7 +133,7 @@ class Application
     end
   end
 
-  def station_by_name(stations = @stations,station_name)
+  def station_by_name(stations = Station.all,station_name)
     stations.detect {|station| station.name == station_name}
   end
 
