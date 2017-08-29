@@ -5,12 +5,12 @@ class Station
 
   attr_reader :name, :trains
 
-  @@stations = []
+  @@stations = {}
 
   def initialize(name)
     @name = name
     @trains = []
-    @@stations << self
+    @@stations[name.to_sym] = self
     register_instance
   end
 
@@ -19,7 +19,7 @@ class Station
   end
 
   def self.find(station_name)
-    @@stations.detect {|station| station.name == station_name}
+    @@stations[station_name.to_sym]
   end
 
   def arrive_train(train)

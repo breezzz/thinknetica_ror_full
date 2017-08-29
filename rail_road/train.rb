@@ -7,19 +7,19 @@ class Train
 
   attr_reader :speed, :route, :number, :current_station_index, :cars
 
-  @@trains =[]
+  @@trains = {}
 
   def initialize(number)
     @speed = 0
     @number = number
     @current_station_index = nil
     @cars = []
-    @@trains << self
+    @@trains[@number.to_sym] =  self
     register_instance
   end
 
   def self.find(train_number)
-    @@trains.detect {|train| train.number == train_number}
+    @@trains[train_number.to_sym]
   end
 
   def type
