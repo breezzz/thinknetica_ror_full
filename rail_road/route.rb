@@ -1,4 +1,7 @@
+require_relative 'instance_counter'
+
 class Route
+  include InstanceCounter
 
   attr_reader :stations
 
@@ -8,6 +11,7 @@ class Route
     @stations = [start_station, end_station]
     @id = start_station.name + "_" + end_station.name
     @@routes << self
+    register_instance
   end
 
   def self.find(station_name)
