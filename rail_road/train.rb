@@ -14,12 +14,12 @@ class Train
     @number = number
     @current_station_index = nil
     @cars = []
-    @@trains[@number.to_sym] =  self
+    @@trains[@number] =  self
     register_instance
   end
 
   def self.find(train_number)
-    @@trains[train_number.to_sym]
+    @@trains[train_number]
   end
 
   def type

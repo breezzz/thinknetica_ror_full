@@ -15,7 +15,7 @@ class Station
   end
 
   def self.all
-    @@stations
+    @@stations.values
   end
 
   def self.find(station_name)
