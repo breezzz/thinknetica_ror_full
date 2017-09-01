@@ -3,7 +3,7 @@ require_relative 'instance_counter'
 class Route
   include InstanceCounter
 
-  attr_reader :stations
+  attr_reader :stations, :id
 
   @@routes = []
 
@@ -27,4 +27,5 @@ class Route
   def remove_station (station)
     @stations.delete(station) if station != @stations[0] && station != @stations[-1]
   end
+
 end

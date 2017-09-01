@@ -6,16 +6,26 @@ class Train
   include InstanceCounter
 
   attr_reader :speed, :route, :number, :current_station_index, :cars
+  NUMBER_FORMAT = /^[0-9a-zа-я]{3}-*[0-9a-zа-я]{2}$/i
 
   @@trains = {}
 
   def initialize(number)
     @speed = 0
     @number = number
+    validate!
     @current_station_index = nil
     @cars = []
     @@trains[@number] =  self
     register_instance
+  end
+
+  #так как нет сеттера, делаю метод класса
+  def self.valid?(number)
+    raise 'Number has invalid format' if number !~ NUMBER_FORMAT
+    true
+  rescue
+    false
   end
 
   def self.find(train_number)
@@ -56,12 +66,18 @@ class Train
     @cars.pop if @speed.zero?
   end
 
-  protected
-# данные методы поместил в protected так как их нет в условии задачи  и они не должны быть доступны извне класса
-
   def current_station
     @route.stations[@current_station_index]
   end
+
+
+  protected
+
+  def validate!
+    raise 'Неверный формат номера' if number !~ NUMBER_FORMAT
+    true
+  end
+# данные методы поместил в protected так как их нет в условии задачи  и они не должны быть доступны извне класса
 
   def next_station
     @route.stations[@current_station_index + 1]
