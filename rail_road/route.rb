@@ -9,9 +9,16 @@ class Route
 
   def initialize (start_station, end_station)
     @stations = [start_station, end_station]
+    validate!
     @id = start_station.name + "_" + end_station.name
     @@routes << self
     register_instance
+  end
+
+  def valid?
+    validate!
+  rescue
+    false
   end
 
   def self.find(station_name)
@@ -27,5 +34,14 @@ class Route
   def remove_station (station)
     @stations.delete(station) if station != @stations[0] && station != @stations[-1]
   end
+
+
+  def validate!
+    validator = @stations.map {|station| station.nil?}
+    raise 'Начальная станция не существует' if validator[0]
+    raise 'Конечная станция не существует' if validator[1]
+    true
+  end
+
 
 end

@@ -69,8 +69,8 @@ class Application
 
   def create_station
     station_name = gets.chomp
-    raise 'Название не может быть пустым' unless Station.valid_name?(station_name)
     Station.new(station_name)
+    puts "Станция создана #{station_name}"
   rescue RuntimeError => e
     puts e.message
   end
@@ -78,7 +78,6 @@ class Application
   def create_train
     puts 'Номер поезда: '
     train_number = gets.chomp
-    raise  unless Train.valid? (train_number)
     puts 'Введите 1 для грузового поезда и 2 для пассажирского:'
     case gets.chomp.to_i
       when 1
@@ -88,33 +87,37 @@ class Application
       else
         puts 'Неверный тип поезда'
     end
-    puts "Создан поезд #{train_number} типа #{Train.find(train_number).class}" unless Train.find(train_number).class == NilClass
-  rescue
-    puts "Неверный формат номера поезда"
+    puts "Создан поезд #{train_number} типа #{Train.find(train_number).class}"
+  rescue RuntimeError => e
+    puts e.message
     retry
   end
 
   def create_route
     puts 'Начальная станция:'
     start_station = Station.find(gets.chomp)
-    raise  unless Station.valid?(start_station)
     puts 'Конечная станция:'
     end_station = Station.find(gets.chomp)
-    raise  unless Station.valid?(start_station)
     route = Route.new(start_station,end_station)
-    puts "Создан маршрут #{route.id}" unless route.class == NilClass
-  rescue
-    puts "Станция несуществует"
+    puts "Создан маршрут #{route.id}"
+  rescue RuntimeError => e
+    puts e.message
   end
 
   def add_station_to_route
     puts 'Название станции для добавления:'
     new_station = Station.find(gets.chomp)
-    raise "Cтанция несуществует" unless Station.valid?(new_station)
+    if new_station.nil?
+      puts 'Станция не существует'
+      return
+    end
     puts 'Название станции из маршрута:'
     station_in_route = gets.chomp
     route = Route.find(station_in_route)
-    raise  "Маршрут не найден" if route.class == NilClass
+    if route.nil?
+      puts 'Маршрут не найден'
+      return
+    end
     route.add_station(new_station)
     puts "Станция #{new_station.name} добавлена в маршрут #{route.id}"
   rescue RuntimeError => e
@@ -125,9 +128,15 @@ class Application
     puts 'Название станции:'
     station_for_remove = gets.chomp
     route_for_remove = Route.find(station_for_remove)
-    raise  "Маршрут не найден" if route_for_remove.class == NilClass
+    if route_for_remove.nil?
+      puts 'Маршрут не найден'
+      return
+    end
     station_for_remove_obj = Station.find(station_for_remove)
-    raise "Cтанция несуществует" unless Station.valid?(station_for_remove_obj)
+    if station_for_remove_obj.nil?
+      puts 'Станция не существует'
+      return
+    end
     route_for_remove.remove_station(station_for_remove_obj)
     puts "Станция #{station_for_remove} удалена из маршрута #{route_for_remove.id}"
   rescue RuntimeError => e
@@ -137,12 +146,17 @@ class Application
   def set_route_to_train
     puts 'Название станции из маршрута:'
     need_route = Route.find(gets.chomp)
-    raise  "Маршрут не найден" if need_route.class == NilClass
+    if need_route.nil?
+      puts 'Маршрут не найден'
+      return
+    end
     puts 'Номер поезда:'
     train_number = gets.chomp
-    raise "Неверный формат номера поезда" unless Train.valid? (train_number)
     train = Train.find(train_number)
-    raise "Поезд не найден" if train.class == NilClass
+    if train.nil?
+      puts 'Поезд не найден'
+      return
+    end
     train.set_route(need_route)
     puts "Маршрут #{need_route.id} назначен поезду #{train_number}. Поезд на станции #{train.current_station.name}"
   rescue RuntimeError => e
@@ -152,9 +166,11 @@ class Application
   def add_car_to_train
     puts 'Номер поезда: '
     train_number = gets.chomp
-    raise "Неверный формат номера поезда" unless Train.valid? (train_number)
     need_train = Train.find(train_number)
-    raise "Поезд не найден" if need_train.class == NilClass
+    if need_train.nil?
+      puts 'Поезд не найден'
+      return
+    end
     case need_train.type
       when :cargo
         need_train.add_car(CargoCar.new)
@@ -171,9 +187,11 @@ class Application
   def remove_car_from_train
     puts 'Номер поезда: '
     train_number = gets.chomp
-    raise "Неверный формат номера поезда" unless Train.valid? (train_number)
     need_train = Train.find(train_number)
-    raise "Поезд не найден" if need_train.class == NilClass
+    if need_train.nil?
+      puts 'Поезд не найден'
+      return
+    end
     removed = need_train.remove_car
     puts "Удален вагон из поезда #{train_number}" if removed
   rescue RuntimeError => e
@@ -183,12 +201,17 @@ class Application
   def send_train_to_next_station
     puts 'Номер поезда: '
     train_number = gets.chomp
-    raise "Неверный формат номера поезда" unless Train.valid? (train_number)
     need_train = Train.find(train_number)
-    raise "Поезд не найден" if need_train.class == NilClass
-    raise "Маршрут не назначен" if need_train.route == NilClass
+    if need_train.nil?
+      puts 'Поезд не найден'
+      return
+    end
+    if need_train.route.nil?
+      puts "У поезда #{train_number} нет маршрута"
+      return
+    end
     need_train.goto_next_station
-    puts "Поезд на станции #{need_train.current_station.name}"
+    puts "Поезд #{train_number} на станции #{need_train.current_station.name}"
   rescue RuntimeError => e
     puts e.message
   end
@@ -196,12 +219,17 @@ class Application
   def send_train_to_prev_station
     puts 'Номер поезда: '
     train_number = gets.chomp
-    raise "Неверный формат номера поезда" unless Train.valid? (train_number)
     need_train = Train.find(train_number)
-    raise "Поезд не найден" if need_train.class == NilClass
-    raise "Маршрут не назначен" if need_train.route == NilClass
+    if need_train.nil?
+      puts 'Поезд не найден'
+      return
+    end
+    if need_train.route.nil?
+      puts "У поезда #{train_number} нет маршрута"
+      return
+    end
     need_train.goto_prev_station
-    puts "Поезд на станции #{need_train.current_station.name}"
+    puts "Поезд #{train_number} на станции #{need_train.current_station.name}"
   rescue RuntimeError => e
     puts e.message
   end
@@ -209,9 +237,7 @@ class Application
   def find_trains_at_station
     puts 'Название станции:'
     station_name = gets.chomp
-    raise 'Название не может быть пустым' unless Station.valid_name?(station_name)
     station_name_obj = Station.find(station_name)
-    raise "Cтанция несуществует" unless Station.valid?(station_name_obj)
     puts "Поезда на станции #{station_name}:"
     puts station_name_obj.trains.map {|train| train.number}
   rescue RuntimeError => e

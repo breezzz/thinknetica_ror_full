@@ -6,7 +6,7 @@ class Train
   include InstanceCounter
 
   attr_reader :speed, :route, :number, :current_station_index, :cars
-  NUMBER_FORMAT = /^[0-9a-zа-я]{3}-*[0-9a-zа-я]{2}$/i
+  NUMBER_FORMAT = /^[\da-zа-я]{3}-*[\da-zа-я]{2}$/i
 
   @@trains = {}
 
@@ -20,10 +20,8 @@ class Train
     register_instance
   end
 
-  #так как нет сеттера, делаю метод класса
-  def self.valid?(number)
-    raise 'Number has invalid format' if number !~ NUMBER_FORMAT
-    true
+  def valid?
+    validate!
   rescue
     false
   end
