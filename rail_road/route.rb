@@ -38,8 +38,8 @@ class Route
   private
 
   def validate!
-    raise 'Начальная станция не существует' if if @stations.first.nil?
-    raise 'Конечная станция не существует' if if @stations.last.nil?
+    raise 'Начальная станция не существует' if @stations.first.nil?
+    raise 'Конечная станция не существует' if @stations.last.nil?
   end
 
 
