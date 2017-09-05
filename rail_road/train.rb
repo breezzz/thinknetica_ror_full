@@ -73,7 +73,6 @@ class Train
 
   def validate!
     raise 'Неверный формат номера' if number !~ NUMBER_FORMAT
-    true
   end
 # данные методы поместил в protected так как их нет в условии задачи  и они не должны быть доступны извне класса
 

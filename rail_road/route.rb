@@ -35,12 +35,11 @@ class Route
     @stations.delete(station) if station != @stations[0] && station != @stations[-1]
   end
 
+  private
 
   def validate!
-    validator = @stations.map {|station| station.nil?}
-    raise 'Начальная станция не существует' if validator[0]
-    raise 'Конечная станция не существует' if validator[1]
-    true
+    raise 'Начальная станция не существует' if if @stations.first.nil?
+    raise 'Конечная станция не существует' if if @stations.last.nil?
   end
 
 

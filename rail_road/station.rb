@@ -40,8 +40,7 @@ class Station
   protected
 
   def validate!
-    raise 'Название не может быть пустым' if @name == '' || @name.nil?
-    true
+    raise 'Название не может быть пустым' if @name.to_s.empty?
   end
 
 # данный метод поместил в protected так как его нет в условии задачи  и он не должен быть доступен извне класса
