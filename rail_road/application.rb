@@ -15,10 +15,13 @@ class Application
                   'Назначить поезду маршрут',
                   'Прицепить вагон к поезду',
                   'Отцепить вагон от поезда',
+                  'Занять место в вагоне',
                   'Отправить поезд на следующую станцию по маршруту',
                   'Отправить поезд на предыдущую станцию по маршруту',
                   'Показать поезда на станции',
-                  'Показать список всех станций']
+                  'Показать список всех станций',
+                  'Показать список всех станций(расширенный)',
+                  'Информация о поезде']
   end
 
   def run
@@ -43,13 +46,19 @@ class Application
         when 8
           remove_car_from_train
         when 9
-          send_train_to_next_station
+          take_place_in_car
         when 10
-          send_train_to_prev_station
+          send_train_to_next_station
         when 11
-          find_trains_at_station
+          send_train_to_prev_station
         when 12
+          find_trains_at_station
+        when 13
           list_all_stations
+        when 14
+          list_all_stations_extended
+        when 15
+          view_train_info
         else
           puts 'Нет такого пункта меню'
       end
@@ -87,7 +96,7 @@ class Application
       else
         puts 'Неверный тип поезда'
     end
-    puts "Создан поезд #{train_number} типа #{Train.find(train_number).class}"
+    puts "Создан поезд #{train_number} типа #{Train.find(train_number).type}"
   rescue RuntimeError => e
     puts e.message
     retry
@@ -173,9 +182,11 @@ class Application
     end
     case need_train.type
       when :cargo
-        need_train.add_car(CargoCar.new)
+        puts 'Объем вагона: '
+        need_train.add_car(CargoCar.new(gets.chomp.to_i))
       when :passenger
-        need_train.add_car(PassengerCar.new)
+        puts 'Кол-во мест: '
+        need_train.add_car(PassengerCar.new(gets.chomp.to_i))
       else
         puts 'Неверный тип поезда'
     end
@@ -234,17 +245,94 @@ class Application
     puts e.message
   end
 
+  def show_trains_at_station(station)
+    station.apply_to_all_trains {|train| puts "#{train.number.ljust(20)} #{train.type.to_s.ljust(10)} #{train.cars.size.to_s.ljust(10)}"}
+  end
+
   def find_trains_at_station
     puts 'Название станции:'
     station_name = gets.chomp
     station_name_obj = Station.find(station_name)
     puts "Поезда на станции #{station_name}:"
-    puts station_name_obj.trains.map {|train| train.number}
+    puts "#{"Номер поезда".ljust(20)} #{"Тип".ljust(10)} #{"Кол-во вагонов".ljust(10)}"
+    show_trains_at_station(station_name_obj)
   rescue RuntimeError => e
     puts e.message
   end
 
   def list_all_stations
-    puts Station.all.map {|station| station.name}
+    Station.all.each do |station|
+      puts "Станция: #{station.name}"
+      puts "#{"Номер поезда".ljust(20)} #{"Тип".ljust(10)} #{"Кол-во вагонов".ljust(10)}"
+      show_trains_at_station(station)
+    end
+  end
+
+  def list_all_stations_extended
+    Station.all.each do |station|
+      puts "Станция: #{station.name}"
+      puts "#{"Номер поезда".ljust(20)} #{"Тип".ljust(10)} #{"Кол-во вагонов".ljust(10)}"
+      station.apply_to_all_trains do |train|
+        train_info(train)
+      end
+    end
+  end
+
+  def view_train_info
+    puts 'Номер поезда: '
+    train_number = gets.chomp
+    train = Train.find(train_number)
+    if train.nil?
+      puts 'Поезд не найден'
+      return
+    end
+    puts "#{"Номер поезда".ljust(20)} #{"Тип".ljust(10)} #{"Кол-во вагонов".ljust(10)}"
+    train_info(train)
+    return train
+  rescue RuntimeError => e
+    puts e.message
+  end
+
+  def train_info(train)
+    puts "#{train.number.ljust(20)} #{train.type.to_s.ljust(10)} #{train.cars.size.to_s.ljust(10)}"
+    case train.type
+      when :cargo
+        measure =  'тонн'
+      when :passenger
+        measure =  'мест'
+    end
+    puts "#{"Номер вагона".ljust(20)} #{"Тип".ljust(10)} Свободно #{measure.ljust(20)} #{"Занято"} #{measure}"
+    train.apply_to_all_cars do |car|
+      puts "#{car.id.to_s.ljust(20)} #{car.type.to_s.ljust(10)} #{car.vacant.to_s.ljust(20)} #{car.occupied.to_s.ljust(10)}"
+    end
+  end
+
+  def take_place_in_car
+    train = view_train_info
+    return if train.nil?
+    puts 'Номер вагона: '
+    car_id = gets.chomp
+    case train.type
+      when :cargo
+        puts 'Кол-во тонн: '
+        volume = gets.chomp.to_f
+        car = CargoCar.find(car_id)
+        if car.nil?
+          puts "Вагон не найден"
+          return
+        end
+        result = car.take_place(volume)
+        puts "В вагоне #{car_id} поезда #{train.number} всего занято #{result} тонн"
+      when :passenger
+        car = PassengerCar.find(car_id)
+        if car.nil?
+          puts "Вагон не найден"
+          return
+        end
+        result = car.take_place
+        puts "В вагоне #{car_id} поезда #{train.number} всего занято #{result} мест"
+    end
+  rescue RuntimeError => e
+    puts e.message
   end
 end

@@ -41,6 +41,4 @@ class Route
     raise 'Начальная станция не существует' if @stations.first.nil?
     raise 'Конечная станция не существует' if @stations.last.nil?
   end
-
-
 end

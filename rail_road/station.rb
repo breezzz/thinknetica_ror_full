@@ -29,6 +29,10 @@ class Station
     false
   end
 
+  def apply_to_all_trains(&block)
+    @trains.each {|train| block.call(train)}
+  end
+
   def arrive_train(train)
     @trains << train
   end

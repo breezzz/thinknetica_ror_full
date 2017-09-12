@@ -30,6 +30,14 @@ class Train
     @@trains[train_number]
   end
 
+  def self.all
+    @@trains.values
+  end
+
+  def apply_to_all_cars(&block)
+    @cars.each {|car| block.call(car)}
+  end
+
   def type
     raise(NotImplementedError, "#{self.class.name}#type is an abstract method.")
   end
@@ -68,7 +76,6 @@ class Train
     @route.stations[@current_station_index]
   end
 
-
   protected
 
   def validate!
@@ -91,5 +98,4 @@ class Train
   def accelerate
     @speed += 10
   end
-
 end
