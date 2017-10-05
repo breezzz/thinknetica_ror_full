@@ -5,32 +5,36 @@ class Station
 
   attr_reader :name, :trains
 
-  @@stations = {}
+  @stations = {}
 
   def initialize(name)
     @name = name
     @trains = []
     validate!
-    @@stations[name] = self
+    self.class.stations[name] = self
     register_instance
   end
 
-  def self.all
-    @@stations.values
-  end
+  class << self
+    attr_reader :stations
 
-  def self.find(station_name)
-    @@stations[station_name]
+    def all
+      stations.values
+    end
+
+    def find(station_name)
+      stations[station_name]
+    end
   end
 
   def valid?
     validate!
-  rescue
+  rescue RuntimeError
     false
   end
 
-  def apply_to_all_trains(&block)
-    @trains.each {|train| block.call(train)}
+  def each_train(&_block)
+    @trains.each { |train| yield(train) }
   end
 
   def arrive_train(train)
@@ -47,9 +51,9 @@ class Station
     raise 'Название не может быть пустым' if @name.to_s.empty?
   end
 
-# данный метод поместил в protected так как его нет в условии задачи  и он не должен быть доступен извне класса
+  # this is unused methods for now so placed in protected
 
   def list_trains_by_type(type)
-    @trains.select { |train|  train.type == type }
+    @trains.select { |train| train.type == type }
   end
 end

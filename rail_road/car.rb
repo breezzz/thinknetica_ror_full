@@ -5,7 +5,7 @@ class Car
   include Manufacturer
   include InstanceCounter
 
-  attr_reader :volume, :occupied, :vacant
+  attr_reader :volume, :occupied
 
   def type
     raise(NotImplementedError, "#{self.class.name}#type is an abstract method.")
@@ -22,22 +22,24 @@ class Car
 
   def valid?
     validate!
-  rescue
+  rescue RuntimeError
     false
   end
 
-  def take_place (quantity = 1)
+  def take_place(quantity = 1)
     @quantity = quantity.to_f
     validate!
     @occupied += @quantity
+  end
+
+  def vacant
     @vacant = @volume - @occupied
-    return @occupied
   end
 
   protected
 
   def validate!
-    raise 'Вместимость вагона должна быть целым положительным числом' if @volume <= 0
+    raise 'Вместимость вагона должна быть больше нуля' if @volume <= 0
     raise 'Количество должно быть положительным числом' if @quantity <= 0
     raise 'Не хватает места!' if @quantity > @vacant
   end

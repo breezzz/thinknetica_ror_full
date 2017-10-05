@@ -2,5 +2,9 @@
 
 require_relative 'application'
 
-Application.new.run
-
+app = Application.new
+loop do
+  m = app.main_menu
+  break if m.zero?
+  app[app.menu_methods[m - 1]]
+end

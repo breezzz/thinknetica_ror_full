@@ -2,16 +2,20 @@ require_relative 'car'
 
 class PassengerCar < Car
   attr_reader :id
-  @@passenger_cars = {}
+  @all = {}
 
   def initialize(volume)
     super
     @id = 'p' + self.class.instances.to_s
-    @@passenger_cars[@id] =  self
+    self.class.all[@id] = self
   end
 
-  def self.find(car_id)
-    @@passenger_cars[car_id]
+  class << self
+    attr_reader :all
+
+    def find(car_id)
+      @all[car_id]
+    end
   end
 
   def type

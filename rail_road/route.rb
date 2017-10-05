@@ -5,34 +5,39 @@ class Route
 
   attr_reader :stations, :id
 
-  @@routes = []
+  @routes = []
 
-  def initialize (start_station, end_station)
+  def initialize(start_station, end_station)
     @stations = [start_station, end_station]
     validate!
-    @id = start_station.name + "_" + end_station.name
-    @@routes << self
+    @id = start_station.name + '_' + end_station.name
+    self.class.routes << self
     register_instance
   end
 
   def valid?
     validate!
-  rescue
+  rescue RuntimeError
     false
   end
 
-  def self.find(station_name)
-    @@routes.detect do |route|
-      route.stations.detect {|station| station.name == station_name}
+  class << self
+    attr_reader :routes
+
+    def find(station_name)
+      routes.detect do |route|
+        route.stations.detect { |station| station.name == station_name }
+      end
     end
   end
 
-  def add_station (station)
+  def add_station(station)
     @stations.insert(-2, station)
   end
 
-  def remove_station (station)
-    @stations.delete(station) if station != @stations[0] && station != @stations[-1]
+  def remove_station(station)
+    way_station = (station != @stations[0]) && (station != @stations[-1])
+    @stations.delete(station) if way_station
   end
 
   private
