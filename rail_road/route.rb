@@ -1,7 +1,12 @@
 require_relative 'instance_counter'
+require_relative 'validation'
 
 class Route
   include InstanceCounter
+  include Validation
+
+  validate :start_station, :presence
+  validate :end_station, :presence
 
   attr_reader :stations, :id
 
@@ -9,16 +14,12 @@ class Route
 
   def initialize(start_station, end_station)
     @stations = [start_station, end_station]
+    @start_station = start_station
+    @end_station = end_station
     validate!
     @id = start_station.name + '_' + end_station.name
     self.class.routes << self
     register_instance
-  end
-
-  def valid?
-    validate!
-  rescue RuntimeError
-    false
   end
 
   class << self
@@ -38,12 +39,5 @@ class Route
   def remove_station(station)
     way_station = (station != @stations[0]) && (station != @stations[-1])
     @stations.delete(station) if way_station
-  end
-
-  private
-
-  def validate!
-    raise 'Начальная станция не существует' if @stations.first.nil?
-    raise 'Конечная станция не существует' if @stations.last.nil?
   end
 end

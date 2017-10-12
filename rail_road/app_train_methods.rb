@@ -7,7 +7,7 @@ module AppTrainMethods
     puts '1 для грузового поезда, другое для пассажирского:'
     gets.to_i == 1 ? CargoTrain.new(tr_num) : PassengerTrain.new(tr_num)
     puts "Создан поезд #{tr_num}"
-  rescue RuntimeError => e
+  rescue StandardError => e
     puts e.message
     retry
   end
@@ -41,7 +41,7 @@ module AppTrainMethods
     return unless validate_train?(train)
     train.type == :cargo ? add_cargo_car(train) : add_pass_car(train)
     puts "Добавлен вагон к поезду #{train_number}"
-  rescue RuntimeError => e
+  rescue StandardError => e
     puts e.message
   end
 
@@ -62,7 +62,7 @@ module AppTrainMethods
     return unless validate_train?(need_train)
     removed = need_train.remove_car
     puts "Удален вагон из поезда #{train_number}" if removed
-  rescue RuntimeError => e
+  rescue StandardError => e
     puts e.message
   end
 
@@ -73,7 +73,7 @@ module AppTrainMethods
     return unless validate_route_train?(train)
     train.goto_next_station
     puts "Поезд #{train.number} на станции #{train.current_station.name}"
-  rescue RuntimeError => e
+  rescue StandardError => e
     puts e.message
   end
 
@@ -84,7 +84,7 @@ module AppTrainMethods
     return unless validate_route_train?(train)
     train.goto_prev_station
     puts "Поезд #{train.number} на станции #{train.current_station.name}"
-  rescue RuntimeError => e
+  rescue StandardError => e
     puts e.message
   end
 
@@ -94,7 +94,7 @@ module AppTrainMethods
     puts 'Номер вагона: '
     car_id = gets.chomp
     train.type == :cargo ? place_cargo_car(car_id) : place_pass_car(car_id)
-  rescue RuntimeError => e
+  rescue StandardError => e
     puts e.message
   end
 

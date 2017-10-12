@@ -5,7 +5,7 @@ module AppStationMethods
     station_name = gets.chomp
     Station.new(station_name)
     puts "Станция создана #{station_name}"
-  rescue RuntimeError => e
+  rescue StandardError => e
     puts e.message
   end
 end

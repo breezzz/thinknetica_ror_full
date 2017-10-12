@@ -1,8 +1,11 @@
 require_relative 'instance_counter'
+require_relative 'validation'
 
 class Station
   include InstanceCounter
+  include Validation
 
+  validate :name, :presence
   attr_reader :name, :trains
 
   @stations = {}
@@ -27,12 +30,6 @@ class Station
     end
   end
 
-  def valid?
-    validate!
-  rescue RuntimeError
-    false
-  end
-
   def each_train(&_block)
     @trains.each { |train| yield(train) }
   end
@@ -46,11 +43,6 @@ class Station
   end
 
   protected
-
-  def validate!
-    raise 'Название не может быть пустым' if @name.to_s.empty?
-  end
-
   # this is unused methods for now so placed in protected
 
   def list_trains_by_type(type)

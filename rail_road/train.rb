@@ -1,27 +1,24 @@
 require_relative 'manufacturer'
 require_relative 'instance_counter'
+require_relative 'accessors'
+require_relative 'validation'
 
 class Train
   include Manufacturer
   include InstanceCounter
+  include Accessors
+  include Validation
 
-  attr_reader :speed, :route, :number, :current_station_index, :cars
-  NUMBER_FORMAT = /^[\da-zа-я]{3}-*[\da-zа-я]{2}$/i
+  attr_accessor_with_history :speed
+  attr_reader :route, :number, :current_station_index, :cars
 
   @trains = {}
 
   def initialize(number)
     @speed = 0
     @number = number
-    validate!
     @current_station_index = nil
     @cars = []
-  end
-
-  def valid?
-    validate!
-  rescue RuntimeError
-    false
   end
 
   class << self
@@ -79,10 +76,6 @@ class Train
 
   protected
 
-  def validate!
-    raise 'Неверный формат номера' if number !~ NUMBER_FORMAT
-  end
-
   # this is unused methods for now so placed in protected
 
   def next_station
@@ -94,10 +87,10 @@ class Train
   end
 
   def stop
-    @speed = 0
+    self.speed = 0
   end
 
   def accelerate
-    @speed += 10
+    self.speed += 10
   end
 end
