@@ -14,7 +14,7 @@ module AppInfoMethods
     puts "Поезда на станции #{station_name}:"
     list_title
     show_trains_at_station(station_name_obj)
-  rescue StandardError => e
+  rescue => e
     puts e.message
   end
 
@@ -26,7 +26,7 @@ module AppInfoMethods
     list_title
     train_info(train)
     return train
-  rescue StandardError => e
+  rescue  => e
     puts e.message
   end
 

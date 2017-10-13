@@ -20,7 +20,7 @@ module AppRouteMethods
     end_station = Station.find(gets.chomp)
     route = Route.new(start_station, end_station)
     puts "Создан маршрут #{route.id}"
-  rescue StandardError => e
+  rescue  => e
     puts e.message
   end
 
@@ -33,7 +33,7 @@ module AppRouteMethods
     return unless validate_route?(route)
     route.add_station(new_station)
     puts 'Станция добавлена в маршрут'
-  rescue StandardError => e
+  rescue  => e
     puts e.message
   end
 
@@ -46,7 +46,7 @@ module AppRouteMethods
     return unless validate_station?(station_for_remove_obj)
     route_for_remove.remove_station(station_for_remove_obj)
     puts "Станция #{station_for_remove} удалена из  #{route_for_remove.id}"
-  rescue StandardError => e
+  rescue  => e
     puts e.message
   end
 
@@ -59,7 +59,7 @@ module AppRouteMethods
     return unless validate_train?(train)
     train.assign_route(route)
     puts 'Маршрут назначен поезду'
-  rescue StandardError => e
+  rescue  => e
     puts e.message
   end
 end
