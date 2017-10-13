@@ -23,7 +23,7 @@ module Accessors
       var_name = "@#{attr_name}".to_sym
       define_method(attr_name) { instance_variable_get(var_name) }
       define_method("#{attr_name}=".to_sym) do |value|
-        raise TypeError, 'Неверный тип' unless value.class.is_a? attr_class
+        raise TypeError, 'Неверный тип' unless value.is_a? attr_class
         instance_variable_set(var_name, value)
       end
     end
